@@ -1,0 +1,25 @@
+name: On-Demand Email Finder
+on:
+  workflow_dispatch:
+    inputs:
+      company_name:
+        description: 'Enter the Company Name (e.g., IBM UK)'
+        required: true
+
+jobs:
+  find-emails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run the Search Engine
+        run: python finder.py "${{ github.event.inputs.company_name }}"
