@@ -22,4 +22,6 @@ jobs:
         run: pip install requests
 
       - name: Run the Search Engine
+        env:
+          APOLLO_API_KEY: ${{ secrets.APOLLO_API_KEY }}
         run: python finder.py "${{ github.event.inputs.company_name }}"
