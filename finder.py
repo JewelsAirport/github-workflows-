@@ -1,4 +1,5 @@
 import sys
+import os
 import requests
 
 if len(sys.argv) < 2:
@@ -8,24 +9,24 @@ if len(sys.argv) < 2:
 company_name = sys.argv[1]
 print(f"--- Starting Employee Search for: {company_name} ---")
 
-# You will need to sign up for a free API key from a provider like Apollo.io
-API_KEY = "YOUR_FREE_API_KEY"
+# Securely grab the API key from GitHub Secrets
+API_KEY = os.environ.get("APOLLO_API_KEY")
 
 def search_company_employees(name):
-    # Step 1: Query the API to find the company and its employees
+    if not API_KEY:
+        print("Error: APOLLO_API_KEY is not set in GitHub Secrets.")
+        return
+
     url = "https://api.apollo.io/v1/mixed_people/search"
     headers = {
         "Content-Type": "application/json",
         "Cache-Control": "no-cache"
     }
     
-    # We ask the API to find people at the inputted company name
     payload = {
         "api_key": API_KEY,
         "q_organization_name": name,
-        # You can uncomment the line below to filter strictly by job titles
-        # "person_titles":,
-        "per_page": 5 # Limit results to save free credits
+        "per_page": 5 
     }
 
     try:
@@ -39,7 +40,6 @@ def search_company_employees(name):
                 title = person.get("title", "Unknown Title")
                 email = person.get("email", "No email found")
                 
-                # Only print if an email was successfully verified by the provider
                 if email:
                     print(f"Name: {full_name}")
                     print(f"Title: {title}")
@@ -51,5 +51,4 @@ def search_company_employees(name):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-# Execute the search
 search_company_employees(company_name)
